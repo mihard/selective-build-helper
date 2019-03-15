@@ -13,6 +13,10 @@ import (
 func main() {
 	app := cli.NewApp()
 
+	app.Version = "0.1.0"
+	app.Name = "selective-build-helper"
+	app.Usage = "A tool to make selective build of complex, monorepo projects."
+
 	app.Flags = []cli.Flag{
 		cli.StringSliceFlag{
 			Name:  "trigger",
