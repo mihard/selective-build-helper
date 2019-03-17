@@ -102,7 +102,7 @@ func main() {
 				fmt.Println(p)
 			}
 		} else {
-			for p := range uniqueFolders {
+			for _, p := range uniqueFolders {
 				fmt.Println(p)
 			}
 		}
