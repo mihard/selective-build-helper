@@ -10,15 +10,22 @@ import (
 )
 
 func CollectDirectories(bp string, commit string, vc vcs.VCS) (directories []string, err error) {
+	var cd *vcs.Commit
 	if commit == "" {
-		commit, err = vc.GetLastCommitID()
+		cd, err = vc.GetLastCommit()
+		if err != nil {
+			return []string{}, errors.Wrapf(err, "Unable to fetch current commit message")
+		}
+	} else {
+		cd, err = vc.GetCommitData(commit)
 		if err != nil {
 			return []string{}, errors.Wrapf(err, "Unable to fetch current commit message")
 		}
 	}
 
-	log.Printf("Commit id: %s", commit)
-	files, err := vc.GetListOfChangedFiles(commit)
+	log.Printf("Commit id: %s", cd.ID)
+	log.Printf("Subject: %s", cd.Subject)
+	files, err := vc.GetListOfChangedFiles(cd)
 	if err != nil {
 		return []string{}, errors.Wrapf(err, "Unable to fetch list of changed files")
 	}
