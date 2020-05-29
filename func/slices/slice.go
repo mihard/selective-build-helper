@@ -1,7 +1,5 @@
 package slices
 
-import "sort"
-
 func InStrings(val string, array []string) (exists bool) {
 	exists = false
 
@@ -15,24 +13,13 @@ func InStrings(val string, array []string) (exists bool) {
 	return
 }
 
-func UniqueStrings(array []string) (r []string) {
-	um := make(map[string]int)
-	r = []string{}
-	var rr []int
-
-	for i, v := range array {
-		um[v] = i
+func UniqueStrings(input []string) (unique []string) {
+	set := make(map[string]struct{})
+	for _, item := range input {
+		if _, found := set[item]; !found {
+			set[item] = struct{}{}
+			unique = append(unique, item)
+		}
 	}
-
-	for _, i := range um {
-		rr = append(rr, i)
-	}
-
-	sort.Ints(rr)
-
-	for _, v := range rr {
-		r = append(r, array[v])
-	}
-
 	return
 }

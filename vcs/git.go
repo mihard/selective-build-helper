@@ -15,6 +15,11 @@ type Git struct {
 	logRX    *regexp.Regexp
 }
 
+const (
+	head     = "HEAD"
+	maxDepth = 100
+)
+
 func MakeGit(rootPath string, basePath string) *Git {
 	err := os.Chdir(rootPath)
 	if err != nil {
@@ -55,30 +60,7 @@ func (g *Git) GetCommitData(commit string) (*Commit, error) {
 }
 
 func (g *Git) GetLastCommit() (*Commit, error) {
-	cmd := exec.Command("git", "log", "-1", `--pretty=format:%H %P %s`)
-	output, err := cmd.Output()
-
-	if err != nil {
-		return nil, err
-	}
-
-	parts := g.logRX.FindStringSubmatch(string(output))
-
-	if len(parts) != 3 {
-		return nil, errors.New("unable to read git log")
-	}
-
-	ids := strings.Split(parts[1], " ")
-
-	if len(parts) < 2 {
-		return nil, errors.New("unable to read git log")
-	}
-
-	return &Commit{
-		ID:        ids[0],
-		ParentIDs: ids[1:],
-		Subject:   parts[2],
-	}, nil
+	return g.GetCommitData(head)
 }
 
 func (g *Git) GetListOfChangedFiles(c *Commit) ([]string, error) {
@@ -120,7 +102,8 @@ func (g *Git) findAllMergedCommits(main string, merged string) []string {
 
 	toCheck := CommitTree{[]string{merged}}
 
-	for true {
+	depth := maxDepth
+	for depth >= 0 {
 		plainMailLine := mainLine.AsPlainSlice()
 
 		var unmerged []string
@@ -152,6 +135,8 @@ func (g *Git) findAllMergedCommits(main string, merged string) []string {
 		toCheck = append(toCheck, nextLayer)
 
 		mainLine = g.loadMoreMailBranchCommits(mainLine)
+
+		depth--
 	}
 
 	return allMerged
