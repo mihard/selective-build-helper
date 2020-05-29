@@ -48,7 +48,7 @@ func (g *Git) GetCommitData(commit string) (*Commit, error) {
 
 	ids := strings.Split(parts[1], " ")
 
-	if len(parts) < 2 {
+	if len(ids) < 2 {
 		return nil, errors.New("unable to read git show")
 	}
 
