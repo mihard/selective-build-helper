@@ -103,7 +103,26 @@ func main() {
 			}
 		} else {
 			for _, p := range uniqueFolders {
-				fmt.Println(p)
+				exclude := false
+				for _, xd := range c.StringSlice("xdir") {
+					if p == xd {
+						exclude = true
+					}
+				}
+				if !exclude {
+					fmt.Println(p)
+				}
+			}
+			for _, p := range c.StringSlice("dir") {
+				exclude := false
+				for _, xd := range uniqueFolders {
+					if p == xd {
+						exclude = true
+					}
+				}
+				if !exclude {
+					fmt.Println(p)
+				}
 			}
 		}
 
